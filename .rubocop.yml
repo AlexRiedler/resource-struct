@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 2.7
 
 Style/StringLiterals:
   Enabled: true
@@ -11,3 +11,15 @@ Style/StringLiteralsInInterpolation:
 
 Layout/LineLength:
   Max: 120
+
+Metrics/MethodLength:
+  Max: 20
+
+Naming/FileName:
+  Enabled: true
+  Exclude:
+    - lib/resource-struct.rb
+
+Metrics/BlockLength:
+  Exclude:
+    - spec/**/*_spec.rb

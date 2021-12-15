@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "Openstruct like access without all the headaches of Hash method overrides etc..."
   spec.homepage = "https://github.com/AlexRiedler/resource-struct"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 2.7.0"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/AlexRiedler/resource-struct"
