@@ -1,8 +1,15 @@
-# Resource::Struct
+# ResourceStruct
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/resource/struct`. To experiment with that code, run `bin/console` for an interactive prompt.
+This is a gem for working with JSON resources from a network source with indifferent and method based access.
 
-TODO: Delete this and the text above, and describe your gem
+Instead of overriding Hash implementation, this wraps a Hash with indifferent access (by symbol or string keys).
+This makes it fast at runtime, while still providing the necessary lookup method of choice.
+
+There are two immutable types `ResouceStruct::FirmStruct` and `ResourceStruct::LooseStruct`.
+
+`ResourceStruct::FirmStruct` provides a way of wrapping a Hash such that accesses to invalid keys will raise an exception through the method lookup method.
+
+`ResouceStruct::LooseStruct` provides a way of wrapping a Hash such that it returns nil instead of raising an exception when the key is not present in the hash.
 
 ## Installation
 
@@ -22,7 +29,37 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### FirmStruct
+
+```ruby
+struct = ResourceStruct::FirmStruct.new({ "foo" => 1, "bar" => [{ "baz" => 2 }, 3] })
+struct.foo? # => true
+struct.brr? # => false
+struct.foo # => 1
+struct.bar # => [FirmStruct<{ "baz" => 2 }>, 3]
+struct.brr # => NoMethodError
+struct[:foo] # => 1
+struct[:brr] # => nil
+struct[:bar, 0, :baz] # => 2
+struct[:bar, 0, :brr] # => nil
+```
+
+### LooseStruct
+
+```ruby
+struct = ResourceStruct::LooseStruct.new({ "foo" => 1, "bar" => [{ "baz" => 2 }, 3] })
+
+struct.foo? # => true
+struct.brr? # => false
+struct.foo # => 1
+struct.bar # => [LooseStruct<{ "baz" => 2 }>, 3]
+struct.brr # => nil
+struct[:foo] # => 1
+struct[:brr] # => nil
+struct[:bar, 0, :baz] # => 2
+struct[:bar, 0, :brr] # => nil
+```
+
 
 ## Development
 
