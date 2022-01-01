@@ -93,6 +93,16 @@ RSpec.describe ResourceStruct::FirmStruct do
     end
 
     include_examples "acts like a firm struct"
+
+    describe "#==" do
+      it "is equivalent to hash with symbol keys" do
+        expect(struct).to eq(described_class.new({ foo: 1, bar: [{ baz: 2 }, 3], car: nil }))
+      end
+
+      it "is equivalent to hash with mixture keys" do
+        expect(struct).to eq(described_class.new({ foo: 1, "bar" => [{ baz: 2 }, 3], "car" => nil }))
+      end
+    end
   end
 
   context "with symbol keys" do
@@ -101,5 +111,15 @@ RSpec.describe ResourceStruct::FirmStruct do
     end
 
     include_examples "acts like a firm struct"
+
+    describe "#==" do
+      it "is equivalent to hash with string keys" do
+        expect(struct).to eq(described_class.new({ "foo" => 1, "bar" => [{ "baz" => 2 }, 3], "car" => nil }))
+      end
+
+      it "is equivalent to hash with mixture keys" do
+        expect(struct).to eq(described_class.new({ foo: 1, "bar" => [{ baz: 2 }, 3], "car" => nil }))
+      end
+    end
   end
 end

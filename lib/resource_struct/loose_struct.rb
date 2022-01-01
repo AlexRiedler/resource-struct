@@ -102,12 +102,16 @@ module ResourceStruct
     def ___all_keys_equal(other)
       return false unless @hash.count == other.count
 
-      @hash.reduce(true) do |acc, (k, v)|
+      @hash.reduce(true) do |acc, (k, _)|
+        value = self[k]
         if other.key?(k)
-          acc && other[k] == v
+          acc && value == other[k]
+        elsif k.is_a?(String)
+          ck = k.to_sym
+          acc && other.key?(ck) && value == other[ck]
         else
           ck = ___convert_key(k)
-          acc && other.key?(ck) && other[ck] == v
+          acc && other.key?(ck) && value == other[ck]
         end
       end
     end
