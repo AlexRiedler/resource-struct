@@ -29,7 +29,7 @@ module ResourceStruct
 
     def method_missing(name, *args, &blk)
       return self[name] if ___key?(name)
-      return !!self[___convert_key(name[...-1])] if name.end_with?("?")
+      return !!self[name[...-1]] if name.end_with?("?")
 
       super
     end
@@ -55,17 +55,20 @@ module ResourceStruct
     end
 
     def ==(other)
-      @hash == other.instance_variable_get(:@hash)
+      other.is_a?(Hash) && ___all_keys_equal(other) ||
+        (other.is_a?(LooseStruct) || other.is_a?(FirmStruct)) && ___all_keys_equal(other.instance_variable_get(:@hash))
     end
 
-    def [](key, *sub_keys)
+    def dig(key, *sub_keys)
       ckey = ___convert_key(key)
 
       result =
         if @ro_struct.key?(ckey)
           @ro_struct[ckey]
+        elsif key.is_a?(String)
+          @ro_struct[ckey] = ___convert_value(@hash[key] || @hash[key.to_sym])
         else
-          @ro_struct[ckey] = ___convert_value(@hash[ckey])
+          @ro_struct[ckey] = ___convert_value(@hash[key] || @hash[ckey])
         end
 
       return result if sub_keys.empty?
@@ -76,7 +79,7 @@ module ResourceStruct
 
       result.dig(*sub_keys)
     end
-    alias dig []
+    alias [] dig
 
     private
 
@@ -92,11 +95,24 @@ module ResourceStruct
     end
 
     def ___key?(key)
-      @hash.key?(___convert_key(key))
+      @hash.key?(key) || @hash.key?(___convert_key(key))
     end
 
     def ___convert_key(key)
       key.is_a?(::Symbol) ? key.to_s : key
+    end
+
+    def ___all_keys_equal(other)
+      return false unless @hash.count == other.count
+
+      @hash.reduce(true) do |acc, (k, v)|
+        if other.key?(k)
+          acc && other[k] == v
+        else
+          ck = ___convert_key(k)
+          acc && other.key?(ck) && other[ck] == v
+        end
+      end
     end
   end
 end
