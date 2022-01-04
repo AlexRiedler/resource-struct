@@ -1,5 +1,14 @@
 ## [Unreleased]
 
+## [0.3.0] - 2022-01-04
+### Feature
+- Support for `as_json` and `to_json`
+- Support for `#[]=`, allowing modification on LooseStruct
+- Support for `JSON.parse(STR, object_class: ResourceStruct::FlexStruct)`
+- Refactor common code between LooseStruct and FirmStruct into `ResourceStruct::Extension::IndifferentLookup`
+- No longer support wrong arity for method based access patterns
+- Rename `LooseStruct` -> `FlexStruct`; `FirmStruct` -> `StrictStruct`
+
 ## [0.2.1] - 2022-01-01
 ### Fix
 - Correct handling of #== operator on Structs with hashes

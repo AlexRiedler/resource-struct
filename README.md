@@ -7,11 +7,11 @@ This is a gem for working with JSON resources from a network source with indiffe
 Instead of overriding Hash implementation, this wraps a Hash with indifferent access (by symbol or string keys).
 This makes it fast at runtime, while still providing the necessary lookup method of choice.
 
-There are two immutable types `ResouceStruct::FirmStruct` and `ResourceStruct::LooseStruct`.
+There are two types `ResouceStruct::StrictStruct` and `ResourceStruct::FlexStruct`.
 
-`ResourceStruct::FirmStruct` provides a way of wrapping a Hash such that accesses to invalid keys will raise an exception through the method lookup method.
+`ResourceStruct::StrictStruct` provides a way of wrapping a Hash such that accesses to invalid keys will raise an exception through the method lookup method; it also is immutable.
 
-`ResouceStruct::LooseStruct` provides a way of wrapping a Hash such that it returns nil instead of raising an exception when the key is not present in the hash.
+`ResouceStruct::FlexStruct` provides a way of wrapping a Hash such that it returns nil instead of raising an exception when the key is not present in the hash.
 
 ## Installation
 
@@ -31,14 +31,14 @@ Or install it yourself as:
 
 ## Usage
 
-### FirmStruct
+### StrictStruct
 
 ```ruby
-struct = ResourceStruct::FirmStruct.new({ "foo" => 1, "bar" => [{ "baz" => 2 }, 3] })
+struct = ResourceStruct::StrictStruct.new({ "foo" => 1, "bar" => [{ "baz" => 2 }, 3] })
 struct.foo? # => true
 struct.brr? # => false
 struct.foo # => 1
-struct.bar # => [FirmStruct<{ "baz" => 2 }>, 3]
+struct.bar # => [StrictStruct<{ "baz" => 2 }>, 3]
 struct.brr # => NoMethodError
 struct[:foo] # => 1
 struct[:brr] # => nil
@@ -46,15 +46,15 @@ struct[:bar, 0, :baz] # => 2
 struct[:bar, 0, :brr] # => nil
 ```
 
-### LooseStruct
+### FlexStruct
 
 ```ruby
-struct = ResourceStruct::LooseStruct.new({ "foo" => 1, "bar" => [{ "baz" => 2 }, 3] })
+struct = ResourceStruct::FlexStruct.new({ "foo" => 1, "bar" => [{ "baz" => 2 }, 3] })
 
 struct.foo? # => true
 struct.brr? # => false
 struct.foo # => 1
-struct.bar # => [LooseStruct<{ "baz" => 2 }>, 3]
+struct.bar # => [FlexStruct<{ "baz" => 2 }>, 3]
 struct.brr # => nil
 struct[:foo] # => 1
 struct[:brr] # => nil
