@@ -78,7 +78,9 @@ module ResourceStruct
       end
 
       def ___key?(key)
-        @hash.key?(key) || @hash.key?(___convert_key(key))
+        @hash.key?(key) ||
+          @hash.key?(___convert_key(key)) ||
+          key.is_a?(String) && @hash.key?(key.to_sym)
       end
 
       def ___convert_key(key)

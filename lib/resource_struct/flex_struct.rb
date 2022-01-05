@@ -45,8 +45,8 @@ module ResourceStruct
       nil
     end
 
-    def respond_to_missing?(_name, _include_private = false)
-      true
+    def respond_to_missing?(name, include_private = false)
+      ___key?(name) || ___key?(name.to_s.chomp("?")) || super
     end
   end
   LooseStruct = FlexStruct

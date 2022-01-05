@@ -58,6 +58,36 @@ RSpec.describe ResourceStruct::StrictStruct do
       end
     end
 
+    describe ".respond_to?" do
+      context "with valid keys" do
+        it "returns true" do
+          expect(struct.respond_to?(:bar)).to eq(true)
+          expect(struct.respond_to?("bar")).to eq(true)
+          expect(struct.respond_to?("cdr")).to eq(true)
+          expect(struct.respond_to?(:bar?)).to eq(true)
+          expect(struct.respond_to?("bar?")).to eq(true)
+          expect(struct.respond_to?("cdr?")).to eq(true)
+        end
+      end
+
+      context "with invalid keys" do
+        it "returns false" do
+          expect(struct.respond_to?(:dar)).to eq(false)
+          expect(struct.respond_to?("dar")).to eq(false)
+          expect(struct.respond_to?("brr")).to eq(false)
+          expect(struct.respond_to?(:dar?)).to eq(false)
+          expect(struct.respond_to?("dar?")).to eq(false)
+          expect(struct.respond_to?("brr?")).to eq(false)
+        end
+      end
+
+      context "with Object methods" do
+        it "returns true" do
+          expect(struct.respond_to?(:frozen?)).to eq(true)
+        end
+      end
+    end
+
     describe ".name" do
       context "with valid keys" do
         it "return expeceted" do

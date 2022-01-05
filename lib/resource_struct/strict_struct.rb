@@ -31,7 +31,7 @@ module ResourceStruct
     end
 
     def respond_to_missing?(name, include_private = false)
-      ___key?(name) || name.end_with?("?") || super
+      ___key?(name) || ___key?(name.to_s.chomp("?")) || super
     end
   end
   FirmStruct = StrictStruct
