@@ -1,6 +1,9 @@
 ## [Unreleased]
+
+## [0.3.3] - 2022-01-05
 ### Fix
 - Support false values correctly, instead of returning nil
+- Support `respond_to?` properly on `FlexStruct`
 
 ## [0.3.2] - 2022-01-05
 ### Fix
