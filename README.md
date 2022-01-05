@@ -1,5 +1,7 @@
 # ResourceStruct
 
+![Continous Integration](https://github.com/AlexRiedler/resource-struct/actions/workflows/default.yml/badge.svg)
+
 This is a gem for working with JSON resources from a network source with indifferent and method based access.
 
 Instead of overriding Hash implementation, this wraps a Hash with indifferent access (by symbol or string keys).
