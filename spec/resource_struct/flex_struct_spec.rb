@@ -11,6 +11,13 @@ RSpec.describe ResourceStruct::FlexStruct do
         end
       end
 
+      context "with nil argument" do
+        it "works" do
+          expect { described_class.new }.not_to raise_error
+          expect { described_class.new(nil) }.not_to raise_error
+        end
+      end
+
       context "with hash argument" do
         it "works" do
           expect { struct }.not_to raise_error
