@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe ResourceStruct::LooseStruct do
-  shared_examples "acts like a loose struct" do
-    subject(:struct) { described_class.new(hash) }
-
+RSpec.describe ResourceStruct::StrictStruct do
+  shared_examples "acts like a firm struct" do
     describe "#intialize" do
       context "with non hash argument" do
         it "raises MethodError" do
@@ -61,9 +59,9 @@ RSpec.describe ResourceStruct::LooseStruct do
       end
 
       context "with missing keys" do
-        it "returns nil" do
-          expect(struct.brr).to be_nil
-          expect(struct.daz).to be_nil
+        it "raises NoMethodError" do
+          expect { struct.brr }.to raise_error(NoMethodError)
+          expect { struct.daz }.to raise_error(NoMethodError)
         end
       end
     end
@@ -88,29 +86,41 @@ RSpec.describe ResourceStruct::LooseStruct do
   end
 
   context "with string keys" do
+    subject(:struct) { described_class.new(hash) }
+
     let(:hash) do
       { "foo" => 1, "bar" => [{ "baz" => 2 }, 3], "car" => nil }
     end
 
-    include_examples "acts like a loose struct"
+    include_examples "acts like a firm struct"
 
     describe "#==" do
       it "is equivalent to hash with symbol keys" do
         expect(struct).to eq(described_class.new({ foo: 1, bar: [{ baz: 2 }, 3], car: nil }))
       end
+
+      it "is equivalent to hash with mixture keys" do
+        expect(struct).to eq(described_class.new({ foo: 1, "bar" => [{ baz: 2 }, 3], "car" => nil }))
+      end
     end
   end
 
   context "with symbol keys" do
+    subject(:struct) { described_class.new(hash) }
+
     let(:hash) do
       { foo: 1, bar: [{ baz: 2 }, 3], car: nil }
     end
 
-    include_examples "acts like a loose struct"
+    include_examples "acts like a firm struct"
 
     describe "#==" do
       it "is equivalent to hash with string keys" do
         expect(struct).to eq(described_class.new({ "foo" => 1, "bar" => [{ "baz" => 2 }, 3], "car" => nil }))
+      end
+
+      it "is equivalent to hash with mixture keys" do
+        expect(struct).to eq(described_class.new({ foo: 1, "bar" => [{ baz: 2 }, 3], "car" => nil }))
       end
     end
   end
