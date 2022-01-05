@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.3.1] - 2022-01-05
+### Fix
+- Support nil meaning empty hash as first argument to `FlexStruct` and `StrictStruct`
+
 ## [0.3.0] - 2022-01-04
 ### Feature
 - Support for `as_json` and `to_json`

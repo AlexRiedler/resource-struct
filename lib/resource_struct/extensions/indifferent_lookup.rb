@@ -16,7 +16,7 @@ module ResourceStruct
         @hash = hash || {}
         @ro_struct = {}
 
-        raise ::ArgumentError, "first argument must be a Hash, found #{hash.class.name}" unless hash.is_a?(Hash)
+        raise ::ArgumentError, "first argument must be a Hash, found #{@hash.class.name}" unless @hash.is_a?(Hash)
       end
 
       def inspect
