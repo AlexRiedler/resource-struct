@@ -1,4 +1,6 @@
 ## [Unreleased]
+### Fix
+- Support false values correctly, instead of returning nil
 
 ## [0.3.2] - 2022-01-05
 ### Fix

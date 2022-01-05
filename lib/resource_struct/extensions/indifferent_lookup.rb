@@ -35,10 +35,12 @@ module ResourceStruct
         result =
           if @ro_struct.key?(ckey)
             @ro_struct[ckey]
-          elsif key.is_a?(String)
-            @ro_struct[ckey] = ___convert_value(@hash[key] || @hash[key.to_sym])
-          else
-            @ro_struct[ckey] = ___convert_value(@hash[key] || @hash[ckey])
+          elsif @hash.key?(key)
+            @ro_struct[ckey] = ___convert_value(@hash[key])
+          elsif key.is_a?(String) && @hash.key?(key.to_sym)
+            @ro_struct[ckey] = ___convert_value(@hash[key.to_sym])
+          elsif key.is_a?(Symbol) && @hash.key?(key.to_s)
+            @ro_struct[ckey] = ___convert_value(@hash[key.to_s])
           end
 
         return result if sub_keys.empty?
