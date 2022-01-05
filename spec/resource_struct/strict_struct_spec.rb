@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.describe ResourceStruct::StrictStruct do
-  shared_examples "acts like a firm struct" do
+  shared_examples "acts like a strict struct" do
     describe "#intialize" do
       context "with non hash argument" do
         it "raises MethodError" do
@@ -90,6 +90,21 @@ RSpec.describe ResourceStruct::StrictStruct do
         end
       end
     end
+
+    context "marshalling" do
+      describe "#marshal_dump" do
+        it "is same as hash dump" do
+          expect(struct.marshal_dump).to eq({ data: struct.to_hash })
+        end
+      end
+
+      describe "#marshal_load" do
+        it "is inverse of dump" do
+          expect(struct.marshal_load({ data: hash })).to eq(struct.to_hash)
+          expect(struct.instance_variable_get(:@ro_struct)).to eq({})
+        end
+      end
+    end
   end
 
   context "with string keys" do
@@ -99,7 +114,7 @@ RSpec.describe ResourceStruct::StrictStruct do
       { "foo" => 1, "bar" => [{ "baz" => 2 }, 3], "car" => nil }
     end
 
-    include_examples "acts like a firm struct"
+    include_examples "acts like a strict struct"
 
     describe "#==" do
       it "is equivalent to hash with symbol keys" do
@@ -110,6 +125,12 @@ RSpec.describe ResourceStruct::StrictStruct do
         expect(struct).to eq(described_class.new({ foo: 1, "bar" => [{ baz: 2 }, 3], "car" => nil }))
       end
     end
+
+    context "Marshal" do
+      subject(:struct) { Marshal.load(Marshal.dump(described_class.new(hash))) }
+
+      include_examples "acts like a strict struct"
+    end
   end
 
   context "with symbol keys" do
@@ -119,7 +140,7 @@ RSpec.describe ResourceStruct::StrictStruct do
       { foo: 1, bar: [{ baz: 2 }, 3], car: nil }
     end
 
-    include_examples "acts like a firm struct"
+    include_examples "acts like a strict struct"
 
     describe "#==" do
       it "is equivalent to hash with string keys" do
@@ -129,6 +150,12 @@ RSpec.describe ResourceStruct::StrictStruct do
       it "is equivalent to hash with mixture keys" do
         expect(struct).to eq(described_class.new({ foo: 1, "bar" => [{ baz: 2 }, 3], "car" => nil }))
       end
+    end
+
+    context "Marshal" do
+      subject(:struct) { Marshal.load(Marshal.dump(described_class.new(hash))) }
+
+      include_examples "acts like a strict struct"
     end
   end
 end

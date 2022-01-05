@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.3.2] - 2022-01-05
+### Fix
+- Support for proper marshalling of object
+
 ## [0.3.1] - 2022-01-05
 ### Fix
 - Support nil meaning empty hash as first argument to `FlexStruct` and `StrictStruct`
