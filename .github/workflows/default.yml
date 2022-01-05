@@ -2,7 +2,9 @@ name: Ruby
 
 on:
   push:
+    branches: [master]
   pull_request:
+    branches: [master]
     types: [opened, reopened]
 
 jobs:
