@@ -27,8 +27,10 @@ module ResourceStruct
 
       if @hash.key?(key)
         @hash[key] = value
-      elsif key.is_a?(String) || key.is_a?(Symbol) && @hash.key?(key.to_sym)
+      elsif key.is_a?(String) && @hash.key?(key.to_sym)
         @hash[key.to_sym] = value
+      elsif key.is_a?(Symbol) && @hash.key?(key.to_s)
+        @hash[key.to_s] = value
       else
         @hash[key] = value
       end

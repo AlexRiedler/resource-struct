@@ -33,6 +33,8 @@ RSpec.describe ResourceStruct::StrictStruct do
           expect(struct["bar"][0]["baz"]).to eq(2)
           expect(struct[:bar][0]["baz"]).to eq(2)
           expect(struct["bar"][0][:baz]).to eq(2)
+          expect(struct[:cdr]).to eq(false)
+          expect(struct["cdr"]).to eq(false)
         end
 
         it "returns expected results" do
@@ -40,6 +42,7 @@ RSpec.describe ResourceStruct::StrictStruct do
           expect(struct[:bar, 0]).to eq(described_class.new({ "baz" => 2 }))
           expect(struct[:bar, 0, :baz]).to eq(2)
           expect(struct[:bar, 1]).to eq(3)
+          expect(struct[:cdr]).to eq(false)
         end
       end
 
@@ -111,18 +114,18 @@ RSpec.describe ResourceStruct::StrictStruct do
     subject(:struct) { described_class.new(hash) }
 
     let(:hash) do
-      { "foo" => 1, "bar" => [{ "baz" => 2 }, 3], "car" => nil }
+      { "foo" => 1, "bar" => [{ "baz" => 2 }, 3], "car" => nil, "cdr" => false }
     end
 
     include_examples "acts like a strict struct"
 
     describe "#==" do
       it "is equivalent to hash with symbol keys" do
-        expect(struct).to eq(described_class.new({ foo: 1, bar: [{ baz: 2 }, 3], car: nil }))
+        expect(struct).to eq(described_class.new({ foo: 1, bar: [{ baz: 2 }, 3], car: nil, cdr: false }))
       end
 
       it "is equivalent to hash with mixture keys" do
-        expect(struct).to eq(described_class.new({ foo: 1, "bar" => [{ baz: 2 }, 3], "car" => nil }))
+        expect(struct).to eq(described_class.new({ foo: 1, "bar" => [{ baz: 2 }, 3], "car" => nil, "cdr" => false }))
       end
     end
 
@@ -137,18 +140,26 @@ RSpec.describe ResourceStruct::StrictStruct do
     subject(:struct) { described_class.new(hash) }
 
     let(:hash) do
-      { foo: 1, bar: [{ baz: 2 }, 3], car: nil }
+      { foo: 1, bar: [{ baz: 2 }, 3], car: nil, cdr: false }
     end
 
     include_examples "acts like a strict struct"
 
     describe "#==" do
       it "is equivalent to hash with string keys" do
-        expect(struct).to eq(described_class.new({ "foo" => 1, "bar" => [{ "baz" => 2 }, 3], "car" => nil }))
+        expect(struct).to eq(
+          described_class.new(
+            { "foo" => 1, "bar" => [{ "baz" => 2 }, 3], "car" => nil, "cdr" => false }
+          )
+        )
       end
 
       it "is equivalent to hash with mixture keys" do
-        expect(struct).to eq(described_class.new({ foo: 1, "bar" => [{ baz: 2 }, 3], "car" => nil }))
+        expect(struct).to eq(
+          described_class.new(
+            { foo: 1, "bar" => [{ baz: 2 }, 3], "car" => nil, "cdr" => false }
+          )
+        )
       end
     end
 
