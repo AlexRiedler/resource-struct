@@ -51,6 +51,17 @@ module ResourceStruct
       end
       alias [] dig
 
+      def marshal_dump
+        {
+          data: @hash
+        }
+      end
+
+      def marshal_load(obj)
+        @ro_struct = {}
+        @hash = obj[:data]
+      end
+
       private
 
       def ___convert_value(value)
