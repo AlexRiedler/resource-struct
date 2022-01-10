@@ -58,6 +58,18 @@ RSpec.describe ResourceStruct::FlexStruct do
           expect { struct[:foo, 0] }.to raise_error(TypeError)
         end
       end
+
+      context "with invalid params" do
+        it "raises ArgumentError" do
+          expect { struct.brr(1) }.to raise_error(ArgumentError)
+          expect { struct.brr(1, racket: 1) }.to raise_error(ArgumentError)
+          expect { struct.brr(racket: 1) }.to raise_error(ArgumentError)
+          expect { struct.foo?(1) }.to raise_error(ArgumentError)
+          expect { struct.foo?(1, racket: false) }.to raise_error(ArgumentError)
+          expect { struct.foo?(racket: false) }.to raise_error(ArgumentError)
+          expect { struct.public_send("foo=") }.to raise_error(ArgumentError)
+        end
+      end
     end
 
     describe ".respond_to?" do
@@ -114,6 +126,7 @@ RSpec.describe ResourceStruct::FlexStruct do
           expect(struct.foo?).to eq(true)
           expect(struct.bar?).to eq(true)
           expect(struct.car?).to eq(false)
+          expect(struct.cdr?).to eq(false)
         end
       end
 
