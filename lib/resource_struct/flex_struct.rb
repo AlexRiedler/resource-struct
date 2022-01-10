@@ -37,12 +37,17 @@ module ResourceStruct
     end
 
     def method_missing(name, *args)
-      args_length = args.length
-      return self[name] if ___key?(name) && args_length.zero?
-      return !!self[name[...-1]] if name.end_with?("?") && args_length.zero?
-      return self[name[...-1]] = args.first if name.end_with?("=") && args_length == 1
+      if name.end_with?("=")
+        return self[name[...-1]] = args.first if args.length == 1
 
-      nil
+        raise ArgumentError, "expected 1 argument received #{args.length} arguments"
+      elsif name.end_with?("?")
+        return !!self[name[...-1]] if args.empty?
+      elsif args.empty?
+        return self[name]
+      end
+
+      raise ArgumentError, "expected 0 arguments received #{args.length} arguments"
     end
 
     def respond_to_missing?(name, include_private = false)

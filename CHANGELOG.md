@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [0.4.0] - 2022-01-09
+### Feature
+- Better support for `ArgumentError` on `FlexStruct`
+
 ## [0.3.3] - 2022-01-05
 ### Fix
 - Support false values correctly, instead of returning nil
