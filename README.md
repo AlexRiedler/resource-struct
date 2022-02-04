@@ -7,11 +7,11 @@ This is a gem for working with JSON resources from a network source with indiffe
 Instead of overriding Hash implementation, this wraps a Hash with indifferent access (by symbol or string keys).
 This makes it fast at runtime, while still providing the necessary lookup method of choice.
 
-There are two types `ResouceStruct::StrictStruct` and `ResourceStruct::FlexStruct`.
+There are two types `ResourceStruct::StrictStruct` and `ResourceStruct::FlexStruct`.
 
 `ResourceStruct::StrictStruct` provides a way of wrapping a Hash such that accesses to invalid keys will raise an exception through the method lookup method; it also is immutable.
 
-`ResouceStruct::FlexStruct` provides a way of wrapping a Hash such that it returns nil instead of raising an exception when the key is not present in the hash.
+`ResourceStruct::FlexStruct` provides a way of wrapping a Hash such that it returns nil instead of raising an exception when the key is not present in the hash.
 
 ## Installation
 
