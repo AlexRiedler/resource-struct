@@ -22,7 +22,14 @@ module ResourceStruct
   class StrictStruct
     include ::ResourceStruct::Extensions::IndifferentLookup
 
-    def method_missing(name, *args, &blk)
+    # StrictStruct is documented as immutable. Return a shallow copy so callers
+    # cannot mutate the internal canonicalized hash through #to_h / #to_hash.
+    def to_h
+      @hash.dup
+    end
+    alias to_hash to_h
+
+    def method_missing(name, *args, &)
       args_length = args.length
       return self[name] if ___key?(name) && args_length.zero?
       return !!self[name[...-1]] if name.end_with?("?") && args_length.zero?

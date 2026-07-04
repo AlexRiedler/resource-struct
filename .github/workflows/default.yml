@@ -5,7 +5,6 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
-    types: [opened, reopened]
 
 jobs:
   test:
@@ -13,10 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: ['2.7', '3.0', '3.1']
+        ruby-version: ['3.3', '3.4', '4.0']
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Set up Ruby
       uses: ruby/setup-ruby@v1
       with:

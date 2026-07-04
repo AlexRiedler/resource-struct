@@ -22,18 +22,7 @@ module ResourceStruct
     def []=(key, value)
       ckey = ___convert_key(key)
       @ro_struct.delete(ckey)
-
-      value = value.instance_variable_get(:@hash) if value.is_a?(FlexStruct) || value.is_a?(StrictStruct)
-
-      if @hash.key?(key)
-        @hash[key] = value
-      elsif key.is_a?(String) && @hash.key?(key.to_sym)
-        @hash[key.to_sym] = value
-      elsif key.is_a?(Symbol) && @hash.key?(key.to_s)
-        @hash[key.to_s] = value
-      else
-        @hash[key] = value
-      end
+      @hash[ckey] = ___canonicalize_value(value)
     end
 
     def method_missing(name, *args)

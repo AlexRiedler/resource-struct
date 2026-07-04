@@ -1,5 +1,23 @@
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-03
+### Breaking
+- Symbol hash keys are now canonicalized to strings internally. This means:
+  - `Struct#to_h`, `#to_hash`, and `#inspect` return string keys even when the input hash used symbols.
+  - Hashes containing both a symbol and string key for the same logical property (e.g. `{ foo: 1, "foo" => 2 }`) will keep only one value after canonicalization.
+  - Marshalled data from previous versions that used symbol keys will load with string keys.
+- Raised minimum Ruby version to 3.3.
+- `StrictStruct#to_h` / `#to_hash` now return a shallow copy instead of the internal mutable hash.
+
+### Fixed
+- Canonicalize symbol keys to strings internally so symbol/string key collisions are handled consistently and cached nested structs have stable identity.
+- README typos (`ResouceStruct`) and GitHub URL placeholder.
+- Removed unused `bindir` / `executables` configuration from the gemspec.
+- Fixed GitHub Actions pull_request trigger so pushes to PR branches (including force pushes) re-run CI.
+
+### Changed
+- Updated RuboCop and CI to current Ruby versions (3.3, 3.4, 4.0) and action versions.
+
 ## [0.4.0] - 2022-01-09
 ### Feature
 - Better support for `ArgumentError` on `FlexStruct`
