@@ -13,10 +13,11 @@ module ResourceStruct
       def_delegators :@hash, :to_h, :to_hash, :to_s, :as_json, :to_json
 
       def initialize(hash = {})
-        @hash = hash || {}
-        @ro_struct = {}
+        hash = {} if hash.nil?
+        raise ::ArgumentError, "first argument must be a Hash, found #{hash.class.name}" unless hash.is_a?(Hash)
 
-        raise ::ArgumentError, "first argument must be a Hash, found #{@hash.class.name}" unless @hash.is_a?(Hash)
+        @hash = ___canonicalize_hash(hash)
+        @ro_struct = {}
       end
 
       def inspect
@@ -24,24 +25,23 @@ module ResourceStruct
       end
 
       def ==(other)
-        other.is_a?(Hash) && ___all_keys_equal(other) ||
-          (other.is_a?(LooseStruct) || other.is_a?(FirmStruct)) &&
-            ___all_keys_equal(other.instance_variable_get(:@hash))
+        other_hash = case other
+                     when Hash then other
+                     when LooseStruct, FirmStruct then other.instance_variable_get(:@hash)
+                     else return false
+                     end
+
+        ___all_keys_equal(other_hash)
       end
 
       def dig(key, *sub_keys)
         ckey = ___convert_key(key)
 
-        result =
-          if @ro_struct.key?(ckey)
-            @ro_struct[ckey]
-          elsif @hash.key?(key)
-            @ro_struct[ckey] = ___convert_value(@hash[key])
-          elsif key.is_a?(String) && @hash.key?(key.to_sym)
-            @ro_struct[ckey] = ___convert_value(@hash[key.to_sym])
-          elsif key.is_a?(Symbol) && @hash.key?(key.to_s)
-            @ro_struct[ckey] = ___convert_value(@hash[key.to_s])
-          end
+        result = if @ro_struct.key?(ckey)
+                   @ro_struct[ckey]
+                 elsif @hash.key?(ckey)
+                   @ro_struct[ckey] = ___convert_value(@hash[ckey])
+                 end
 
         return result if sub_keys.empty?
 
@@ -54,17 +54,34 @@ module ResourceStruct
       alias [] dig
 
       def marshal_dump
-        {
-          data: @hash
-        }
+        { data: @hash }
       end
 
       def marshal_load(obj)
         @ro_struct = {}
-        @hash = obj[:data]
+        @hash = ___canonicalize_hash(obj[:data] || {})
       end
 
       private
+
+      def ___canonicalize_hash(hash)
+        hash.each_with_object({}) do |(key, value), memo|
+          memo[___convert_key(key)] = ___canonicalize_value(value)
+        end
+      end
+
+      def ___canonicalize_value(value)
+        case value
+        when LooseStruct, FirmStruct
+          value.instance_variable_get(:@hash)
+        when ::Array
+          value.map { |v| ___canonicalize_value(v) }
+        when Hash
+          ___canonicalize_hash(value)
+        else
+          value
+        end
+      end
 
       def ___convert_value(value)
         case value
@@ -78,9 +95,7 @@ module ResourceStruct
       end
 
       def ___key?(key)
-        @hash.key?(key) ||
-          @hash.key?(___convert_key(key)) ||
-          key.is_a?(String) && @hash.key?(key.to_sym)
+        @hash.key?(___convert_key(key))
       end
 
       def ___convert_key(key)
@@ -90,17 +105,15 @@ module ResourceStruct
       def ___all_keys_equal(other)
         return false unless @hash.count == other.count
 
-        @hash.reduce(true) do |acc, (k, _)|
-          value = self[k]
-          if other.key?(k)
-            acc && value == other[k]
-          elsif k.is_a?(String)
-            ck = k.to_sym
-            acc && other.key?(ck) && value == other[ck]
-          else
-            ck = ___convert_key(k)
-            acc && other.key?(ck) && value == other[ck]
-          end
+        @hash.all? do |k, _|
+          other_value = if other.key?(k)
+                          other[k]
+                        elsif k.is_a?(String) && other.key?(k.to_sym)
+                          other[k.to_sym]
+                        else
+                          return false
+                        end
+          self[k] == other_value
         end
       end
     end

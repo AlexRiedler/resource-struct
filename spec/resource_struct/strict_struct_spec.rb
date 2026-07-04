@@ -2,9 +2,9 @@
 
 RSpec.describe ResourceStruct::StrictStruct do
   shared_examples "acts like a strict struct" do
-    describe "#intialize" do
+    describe "#initialize" do
       context "with non hash argument" do
-        it "raises MethodError" do
+        it "raises ArgumentError" do
           expect { described_class.new("foo") }.to raise_error(ArgumentError)
         end
       end
@@ -56,6 +56,23 @@ RSpec.describe ResourceStruct::StrictStruct do
           expect { struct[:foo, 0] }.to raise_error(TypeError)
         end
       end
+
+      context "with colliding symbol and string keys" do
+        let(:hash) do
+          { "foo" => 1, foo: 2, bar: [{ baz: 3, "baz" => 4 }] }
+        end
+
+        it "returns consistent values regardless of access style" do
+          expect(struct[:foo]).to eq(struct["foo"])
+          expect(struct.foo).to eq(struct["foo"])
+          expect(struct[:bar][0][:baz]).to eq(struct[:bar][0]["baz"])
+          expect(struct["bar"][0].baz).to eq(struct["bar"][0]["baz"])
+        end
+
+        it "returns the same nested object for symbol and string access" do
+          expect(struct[:bar][0]).to equal(struct["bar"][0])
+        end
+      end
     end
 
     describe ".respond_to?" do
@@ -90,7 +107,7 @@ RSpec.describe ResourceStruct::StrictStruct do
 
     describe ".name" do
       context "with valid keys" do
-        it "return expeceted" do
+        it "returns expected" do
           expect(struct.foo).to eq(1)
           expect(struct.bar[0]).to eq(described_class.new({ "baz" => 2 }))
           expect(struct.bar[0].baz).to eq(2)
